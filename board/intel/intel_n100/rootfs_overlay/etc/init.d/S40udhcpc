@@ -1,0 +1,17 @@
+#!/bin/sh
+
+IFACE="enp1s0"
+TRIES=10
+
+echo "Waiting for $IFACE to become available..."
+
+while ! ip link show "$IFACE" > /dev/null 2>&1; do
+    sleep 1
+    TRIES=$((TRIES - 1))
+    [ "$TRIES" -eq 0 ] && echo "Timeout waiting for $IFACE" && exit 1
+done
+
+echo "$IFACE is up, starting udhcpc..."
+/sbin/udhcpc -i "$IFACE" -q &
+
+
