@@ -1,5 +1,0 @@
-# name     password   uid  gid  groups     home directory  shell
-yao     "cokefugu"     1001 1001  -          /home/yao    /bin/bash
-
-# name gid members
-yao - 1001
