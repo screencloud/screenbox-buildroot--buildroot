@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_CHROME_DEVTOOLS_PROTOCOL
+	bool "python-chrome-devtools-protocol"
+	select BR2_PACKAGE_PYTHON_DEPRECATED # runtime
+	help
+	  Python type wrappers for Chrome DevTools Protocol (CDP).
+
+	  https://github.com/hyperiongray/python-chrome-devtools-protocol

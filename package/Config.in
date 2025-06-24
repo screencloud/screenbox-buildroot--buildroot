@@ -1390,6 +1390,10 @@ menu "External python modules"
 	source "package/python-zlmdb/Config.in"
 	source "package/python-zope-interface/Config.in"
 	source "package/python-zopfli/Config.in"
+      source "package/python-awsiotsdk/Config.in"
+      source "package/python-awscrt/Config.in"
+      source "package/python-chrome-devtools-protocol/Config.in"
+      source "package/python-deprecated/Config.in"
 endmenu
 endif
 	source "package/quickjs/Config.in"

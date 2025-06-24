@@ -33,6 +33,7 @@ config BR2_PACKAGE_LIBV4L_UTILS
 	  - v4l2-compliance
 	  - v4l2-ctl, cx18-ctl, ivtv-ctl
 	  - v4l2-sysfs-path
+	  - v4l2-tracer (if json-c is enabled)
 	  - rds-ctl
 	  - qv4l2 (if Qt is enabled)
 

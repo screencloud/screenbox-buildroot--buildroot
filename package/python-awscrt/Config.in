@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_AWSCRT
+	bool "python-awscrt"
+	depends on BR2_PACKAGE_OPENSSL
+	help
+	  A common runtime for AWS Python projects.
+
+	  https://github.com/awslabs/aws-crt-python

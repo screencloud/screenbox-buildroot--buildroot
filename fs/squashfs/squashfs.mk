@@ -7,7 +7,7 @@
 ROOTFS_SQUASHFS_DEPENDENCIES = host-squashfs
 
 ROOTFS_SQUASHFS_ARGS = \
-	-noappend \
+       -noappend -no-xattrs -tailends -no-sparse -log-action "no-tailend @ subpathname(boot)" -log-action "no-fragments @ subpathname(boot)" \
 	-processors $(PARALLEL_JOBS) \
 	-b $(call qstrip,$(BR2_TARGET_ROOTFS_SQUASHFS_BS)) \
 	$(call qstrip,$(BR2_TARGET_ROOTFS_SQUASHFS_COMP_OPTS))

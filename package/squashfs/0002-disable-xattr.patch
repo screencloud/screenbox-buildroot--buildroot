@@ -1,0 +1,36 @@
+diff --git a/squashfs-tools/mksquashfs.c b/squashfs-tools/mksquashfs.c
+index aaa4b00..aa027f5 100644
+--- a/squashfs-tools/mksquashfs.c
++++ b/squashfs-tools/mksquashfs.c
+@@ -3188,7 +3188,7 @@ struct dir_info *create_dir(char *pathname, char *subpath, int depth)
+	dir->subpath = strdup(subpath);
+	dir->count = 0;
+	dir->directory_count = 0;
+-	dir->dir_is_ldir = TRUE;
++	dir->dir_is_ldir = FALSE;
+	dir->list = NULL;
+	dir->depth = depth;
+	dir->excluded = 0;
+@@ -4132,8 +4132,24 @@ static void dir_scan6(struct dir_info *dir)
+			dir_scan6(dir_ent->dir);
+	}
+
++#if 0
+	if((dir->count < 257 && byte_count < SQUASHFS_METADATA_SIZE))
+		dir->dir_is_ldir = FALSE;
++#else
++ 	dir->dir_is_ldir = FALSE;
++	if((dir->count < 257 && byte_count < SQUASHFS_METADATA_SIZE)){
++		dir->dir_is_ldir = FALSE;
++	} else {
++		printf("\n\n\n\n\n");
++		printf("\n   dir->pathname: %s", dir->pathname);
++		printf("\n    dir->subpath: %s", dir->subpath);
++		printf("\ndir->dir_is_ldir: %d", dir->dir_is_ldir);
++		printf("\n      dir->count: %d", dir->count);
++		printf("\n      byte_count: %d", byte_count);
++		printf("\n   METADATA_SIZE: %d", SQUASHFS_METADATA_SIZE);
++		printf("\n\n\n\n\n");
++	}
++#endif
+ }

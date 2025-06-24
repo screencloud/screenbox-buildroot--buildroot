@@ -1,0 +1,5 @@
+# md5, sha256 from https://pypi.org/pypi/chrome-devtools-protocol/json
+md5  8a4a69793fc3a0a4ac1a8c7fa0b3689a  chrome-devtools-protocol-0.4.0.tar.gz
+sha256  eb26b540c2e0bc2e35021e2347e5af2b0c5b9f8d0f5a2136dc64d1ae7e7e9328  chrome-devtools-protocol-0.4.0.tar.gz
+# Locally computed sha256 checksums
+sha256  2d5e3fc506b6c87ad93b77b9aa76009a58fea72be5fb56e6803bc08cb2887999  LICENSE

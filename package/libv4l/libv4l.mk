@@ -9,7 +9,7 @@ LIBV4L_SOURCE = v4l-utils-$(LIBV4L_VERSION).tar.bz2
 LIBV4L_SITE = https://linuxtv.org/downloads/v4l-utils
 LIBV4L_INSTALL_STAGING = YES
 LIBV4L_DEPENDENCIES = host-pkgconf
-LIBV4L_CONF_OPTS = --disable-doxygen-doc --disable-qvidcap --disable-v4l2-tracer
+LIBV4L_CONF_OPTS = --disable-doxygen-doc --disable-qvidcap
 # needed to get utils/qv4l link flags right
 LIBV4L_AUTORECONF = YES
 # add host-gettext for AM_ICONV macro
@@ -65,6 +65,13 @@ LIBV4L_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -std=gnu++11"
 # IR BPF decoder support needs toolchain with linux-headers >= 3.18
 # libelf and clang support
 LIBV4L_CONF_OPTS += --disable-bpf
+
+ifeq ($(BR2_PACKAGE_JSON_C),y)
+LIBV4L_CONF_OPTS += --enable-v4l2-tracer
+LIBV4L_DEPENDENCIES += json-c
+else
+LIBV4L_CONF_OPTS += --disable-v4l2-tracer
+endif
 
 ifeq ($(BR2_PACKAGE_QT5BASE)$(BR2_PACKAGE_QT5BASE_GUI)$(BR2_PACKAGE_QT5BASE_WIDGETS),yyy)
 LIBV4L_CONF_OPTS += --enable-qv4l2

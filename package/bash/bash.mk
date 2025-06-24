@@ -68,4 +68,12 @@ define BASH_ADD_BASH_TO_SHELLS
 endef
 BASH_TARGET_FINALIZE_HOOKS += BASH_ADD_BASH_TO_SHELLS
 
+# install default bash settings
+define BASH_INSTALL_DEFAULT_PROFILE
+	$(INSTALL) -D -m 644 package/bash/bash_profile.sh \
+		$(TARGET_DIR)/etc/profile.d/bash_profile.sh
+endef
+
+BASH_TARGET_FINALIZE_HOOKS += BASH_INSTALL_DEFAULT_PROFILE
+
 $(eval $(autotools-package))
