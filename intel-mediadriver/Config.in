@@ -1,0 +1,5 @@
+config BR2_PACKAGE_INTEL_MEDIADRIVER
+	bool "intel-mediadriver"
+	depends on BR2_PACKAGE_LIBVA
+	help
+	  Intel VAAPI driver for Gen8+ GPUs (Broadwell and newer, including N100 Xe).

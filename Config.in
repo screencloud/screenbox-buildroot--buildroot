@@ -1,5 +1,3 @@
-#
-
 mainmenu "Buildroot $BR2_VERSION Configuration"
 
 config BR2_HAVE_DOT_CONFIG
@@ -944,3 +942,6 @@ source "Config.in.legacy"
 
 # br2-external menus definitions
 source "$BR2_BASE_DIR/.br2-external.in.menus"
+
+source "package/intel-mediadriver/Config.in"
+
