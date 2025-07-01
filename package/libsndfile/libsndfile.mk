@@ -4,41 +4,44 @@
 #
 ################################################################################
 
-LIBSNDFILE_VERSION = 1.0.28
-LIBSNDFILE_SITE = http://www.mega-nerd.com/libsndfile/files
+LIBSNDFILE_VERSION = 1.2.2
+LIBSNDFILE_SOURCE = libsndfile-$(LIBSNDFILE_VERSION).tar.xz
+LIBSNDFILE_SITE = https://github.com/libsndfile/libsndfile/releases/download/$(LIBSNDFILE_VERSION)
 LIBSNDFILE_INSTALL_STAGING = YES
 LIBSNDFILE_LICENSE = LGPL-2.1+
 LIBSNDFILE_LICENSE_FILES = COPYING
+LIBSNDFILE_CPE_ID_VALID = YES
+LIBSNDFILE_DEPENDENCIES = host-pkgconf
 
-# 0001-double64_init-Check-psf-sf.channels-against-upper-bo.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-14634
-# 0002-Check-MAX_CHANNELS-in-sndfile-deinterleave.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2018-13139 CVE-2018-19432
-# 0003-a-ulaw-fix-multiple-buffer-overflows-432.patch
-LIBSNDFILE_IGNORE_CVES += \
-	CVE-2017-14245 CVE-2017-14246 CVE-2017-17456 CVE-2017-17457 \
-	CVE-2018-19661 CVE-2018-19662
-# disputed, https://github.com/erikd/libsndfile/issues/398
-LIBSNDFILE_IGNORE_CVES += CVE-2018-13419
-# 0004-src-wav.c-Fix-heap-read-overflow.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2018-19758
-# 0005-wav_write_header-don-t-read-past-the-array-end.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2019-3832
-# 0006-src-aiff.c-Fix-a-buffer-read-overflow.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-6892
-# 0007-FLAC-Fix-a-buffer-read-overrun.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-8361
-# 0008-src-flac.c-Fix-a-buffer-read-overflow.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-8362 CVE-2017-8365
-# 0009-src-flac-c-Fix-another-memory-leak.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-8363
-# 0010-src-common-c-Fix-heap-buffer-overflows-when-writing-strings-in.patch
-LIBSNDFILE_IGNORE_CVES += CVE-2017-12562
+# 0001-mat4-mat5-fix-int-overflow-in-dataend-calculation.patch
+# 0002-au-avoid-int-overflow-while-calculating-data_end.patch
+# 0003-avr-fix-int-overflow-in-avr_read_header.patch
+# 0004-sds-fix-int-overflow-warning-in-sample-calculations.patch
+# 0005-aiff-fix-int-overflow-when-counting-header-elements.patch
+# 0006-ircam-fix-int-overflow-in-ircam_read_header.patch
+# 0007-mat4-mat5-fix-int-overflow-when-calculating-blockwid.patch
+# 0008-common-fix-int-overflow-in-psf_binheader_readf.patch
+# 0009-nms_adpcm-fix-int-overflow-in-signal-estimate.patch
+# 0010-nms_adpcm-fix-int-overflow-in-sf.frames-calc.patch
+# 0011-pcm-fix-int-overflow-in-pcm_init.patch
+# 0012-rf64-fix-int-overflow-in-rf64_read_header.patch
+# 0013-ima_adpcm-fix-int-overflow-in-ima_reader_init.patch
+LIBSNDFILE_IGNORE_CVES += CVE-2022-33065
 
+# 0014-src-ogg-better-error-checking-for-vorbis.-Fixes-1035.patch
+LIBSNDFILE_IGNORE_CVES += CVE-2024-50612
+
+LIBSNDFILE_CONF_ENV = ac_cv_prog_cc_c99='-std=gnu99'
 LIBSNDFILE_CONF_OPTS = \
 	--disable-sqlite \
 	--disable-alsa \
-	--disable-external-libs \
 	--disable-full-suite
+
+ifeq ($(BR2_PACKAGE_FLAC)$(BR2_PACKAGE_LIBVORBIS)$(BR2_PACKAGE_OPUS),yyy)
+LIBSNDFILE_DEPENDENCIES += flac host-pkgconf libvorbis opus
+LIBSNDFILE_CONF_OPTS += --enable-external-libs
+else
+LIBSNDFILE_CONF_OPTS += --disable-external-libs
+endif
 
 $(eval $(autotools-package))

@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-FREERDP_VERSION = 2.2.0
-FREERDP_SITE = https://pub.freerdp.com/releases
+# Latest, and probably last, commit on the stable-2.0 branch
+FREERDP_VERSION = 2.11.7-18-g0ee17e2f8e49d56ab5b90d5160fa8f87ffc445e0
+FREERDP_SITE = https://github.com/FreeRDP/FreeRDP
+FREERDP_SITE_METHOD = git
 FREERDP_DEPENDENCIES = libglib2 openssl zlib
 FREERDP_LICENSE = Apache-2.0
 FREERDP_LICENSE_FILES = LICENSE
+FREERDP_CPE_ID_VENDOR = freerdp
 
 FREERDP_INSTALL_STAGING = YES
 
@@ -40,6 +43,11 @@ FREERDP_CONF_OPTS += -DWITH_ALSA=ON
 FREERDP_DEPENDENCIES += alsa-lib
 else
 FREERDP_CONF_OPTS += -DWITH_ALSA=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+FREERDP_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lexecinfo
+FREERDP_DEPENDENCIES += libexecinfo
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUSB),y)

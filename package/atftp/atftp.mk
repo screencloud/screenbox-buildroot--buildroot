@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-ATFTP_VERSION = 0.7.2
+ATFTP_VERSION = 0.8.0
 ATFTP_SITE = http://sourceforge.net/projects/atftp/files
 ATFTP_LICENSE = GPL-2.0+
 ATFTP_LICENSE_FILES = LICENSE
-# 0001-Makefile.am-link-against-libpthread-for-atftp.patch patches Makefile.am
+ATFTP_CPE_ID_VALID = YES
+ATFTP_SELINUX_MODULES = tftp
+# No configure in tarball
 ATFTP_AUTORECONF = YES
 ATFTP_CONF_OPTS = --disable-libwrap --disable-mtftp
 # For static we need to explicitly link against libpthread
@@ -27,11 +29,16 @@ else
 ATFTP_CONF_OPTS += --disable-libreadline
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
-ATFTP_DEPENDENCIES += pcre
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+ATFTP_DEPENDENCIES += pcre2
 ATFTP_CONF_OPTS += --enable-libpcre
 else
 ATFTP_CONF_OPTS += --disable-libpcre
 endif
+
+define ATFTP_INSTALL_INIT_SYSV
+	$(INSTALL) -m 755 -D package/atftp/S80atftpd \
+		$(TARGET_DIR)/etc/init.d/S80atftpd
+endef
 
 $(eval $(autotools-package))

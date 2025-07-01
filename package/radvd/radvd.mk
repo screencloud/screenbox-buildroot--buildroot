@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-RADVD_VERSION = 2.19
+RADVD_VERSION = 2.20
 RADVD_SITE = http://www.litech.org/radvd/dist
-RADVD_DEPENDENCIES = host-bison host-flex host-pkgconf
+RADVD_DEPENDENCIES = host-bison host-flex host-pkgconf libbsd
 # We need to ignore <linux/if_arp.h>, because radvd already includes
 # <net/if_arp.h>, which conflicts with <linux/if_arp.h>.
 RADVD_CONF_ENV = \
@@ -14,6 +14,7 @@ RADVD_CONF_ENV = \
 	ac_cv_header_linux_if_arp_h=no
 RADVD_LICENSE = BSD-4-Clause-like
 RADVD_LICENSE_FILES = COPYRIGHT
+RADVD_SELINUX_MODULES = radvd
 
 ifeq ($(BR2_TOOLCHAIN_HAS_SSP),y)
 RADVD_CONF_OPTS += --with-stack-protector

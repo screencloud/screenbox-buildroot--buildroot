@@ -4,25 +4,17 @@
 #
 ################################################################################
 
-MENDER_GRUBENV_VERSION = 1.3.0
+MENDER_GRUBENV_VERSION = e4cdd9db213de15e79576b40fd3f07736ac85709
 MENDER_GRUBENV_SITE = $(call github,mendersoftware,grub-mender-grubenv,$(MENDER_GRUBENV_VERSION))
 MENDER_GRUBENV_LICENSE = Apache-2.0
 MENDER_GRUBENV_LICENSE_FILES = LICENSE
 # Grub2 must be built first so this package can overwrite the config files
 # provided by grub.
-MENDER_GRUBENV_DEPENDENCIES = grub2
-MENDER_GRUBENV_INSTALL_IMAGES = YES
-
-ifeq ($(BR2_TARGET_GRUB2_I386_PC)$(BR2_TARGET_GRUB2_ARM_UBOOT),y)
-MENDER_GRUBENV_ENV_DIR = /boot/grub
-else
-MENDER_GRUBENV_ENV_DIR = /boot/EFI/BOOT
-endif
+MENDER_GRUBENV_DEPENDENCIES = grub2 util-linux
 
 MENDER_GRUBENV_MAKE_ENV = \
 	$(TARGET_CONFIGURE_OPTS) \
-	$(TARGET_MAKE_ENV) \
-	ENV_DIR=$(MENDER_GRUBENV_ENV_DIR)
+	$(TARGET_MAKE_ENV)
 
 MENDER_GRUBENV_DEFINES = \
 	$(or $(call qstrip,$(BR2_PACKAGE_MENDER_GRUBENV_DEFINES)),\
@@ -30,15 +22,53 @@ MENDER_GRUBENV_DEFINES = \
 
 # These grub modules must be built in for the grub scripts to work properly.
 # Without them, the system will not boot.
-MENDER_GRUBENV_MANDATORY_MODULES=loadenv hashsum echo halt gcry_sha256 test
-MENDER_GRUBENV_MODULES_MISSING = \
-	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES)),\
+MENDER_GRUBENV_MANDATORY_MODULES = loadenv hashsum echo halt gcry_sha256 test regexp
+
+ifeq ($(BR2_TARGET_GRUB2_HAS_LEGACY_BOOT),y)
+MENDER_GRUBENV_MODULES_MISSING_PC = \
+	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES_PC)),\
 		$(MENDER_GRUBENV_MANDATORY_MODULES))
 
+MENDER_GRUBENV_MAKE_ENV += BOOT_DIR=/boot
+
+define MENDER_GRUBENV_INSTALL_I386_CFG
+	mkdir -p $(BINARIES_DIR)/boot-part/grub
+	cp -dpfr $(MENDER_GRUBENV_BUILDDIR)/mender_grub.cfg \
+		$(TARGET_DIR)/boot/grub/grub.cfg
+	cp -dpfr $(TARGET_DIR)/boot/grub/grub.cfg \
+		$(TARGET_DIR)/boot/grub-mender-grubenv \
+		$(BINARIES_DIR)/boot-part/
+endef
+MENDER_GRUBENV_TARGET_FINALIZE_HOOKS += MENDER_GRUBENV_INSTALL_I386_CFG
+endif # BR2_TARGET_GRUB2_HAS_LEGACY_BOOT
+
+ifeq ($(BR2_TARGET_GRUB2_HAS_EFI_BOOT),y)
+MENDER_GRUBENV_MODULES_MISSING_EFI = \
+	$(filter-out $(call qstrip,$(BR2_TARGET_GRUB2_BUILTIN_MODULES_EFI)),\
+		$(MENDER_GRUBENV_MANDATORY_MODULES))
+
+MENDER_GRUBENV_MAKE_ENV += BOOT_DIR=/boot/EFI/BOOT
+
+define MENDER_GRUBENV_INSTALL_EFI_CFG
+	mkdir -p $(BINARIES_DIR)/efi-part/EFI/BOOT
+	cp -dpfr $(MENDER_GRUBENV_BUILDDIR)/mender_grub.cfg \
+		$(TARGET_DIR)/boot/EFI/BOOT/grub.cfg
+	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub.cfg \
+		$(BINARIES_DIR)/efi-part/EFI/BOOT
+	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub-mender-grubenv \
+		$(BINARIES_DIR)/efi-part/
+endef
+MENDER_GRUBENV_TARGET_FINALIZE_HOOKS += MENDER_GRUBENV_INSTALL_EFI_CFG
+endif # BR2_TARGET_GRUB2_HAS_EFI_BOOT
+
 ifeq ($(BR2_PACKAGE_MENDER_GRUBENV)$(BR_BUILDING),yy)
-ifneq ($(MENDER_GRUBENV_MODULES_MISSING),)
-$(error The following missing grub2 modules must be enabled for mender-grubenv \
-	to work: $(MENDER_GRUBENV_MODULES_MISSING))
+ifneq ($(MENDER_GRUBENV_MODULES_MISSING_EFI),)
+$(error The following missing grub2 efi modules must be enabled for mender-grubenv \
+	to work: $(MENDER_GRUBENV_MODULES_MISSING_EFI))
+endif
+ifneq ($(MENDER_GRUBENV_MODULES_MISSING_PC),)
+$(error The following missing grub2 pc modules must be enabled for mender-grubenv \
+	to work: $(MENDER_GRUBENV_MODULES_MISSING_PC))
 endif
 endif
 
@@ -51,15 +81,10 @@ define MENDER_GRUBENV_BUILD_CMDS
 endef
 
 define MENDER_GRUBENV_INSTALL_TARGET_CMDS
-	$(MENDER_GRUBENV_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) -C $(@D) install
-endef
-
-# Overwrite the default grub2 config files with the ones in this package.
-define MENDER_GRUBENV_INSTALL_IMAGES_CMDS
-	mkdir -p $(BINARIES_DIR)/efi-part/EFI/BOOT
-	cp -dpfr $(TARGET_DIR)/boot/EFI/BOOT/grub.cfg \
-		$(TARGET_DIR)/boot/EFI/BOOT/mender_grubenv* \
-		$(BINARIES_DIR)/efi-part/EFI/BOOT
+	$(MENDER_GRUBENV_MAKE_ENV) $(MAKE) DESTDIR=$(TARGET_DIR) -C $(@D) \
+		install install-boot-env
+	# The grub-mender-grubenv-* utilities use this file to function.
+	echo 'ENV_DIR=/boot/grub-mender-grubenv' > $(TARGET_DIR)/etc/mender_grubenv.config
 endef
 
 $(eval $(generic-package))

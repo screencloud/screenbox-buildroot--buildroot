@@ -1,17 +1,18 @@
-comment "python3 needs a toolchain w/ wchar, threads, dynamic library"
+comment "python3 needs a toolchain w/ wchar, threads, dynamic library, time64 support"
 	depends on BR2_USE_MMU
-	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || (!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1 && BR2_TOOLCHAIN_USES_UCLIBC)
 
 config BR2_PACKAGE_PYTHON3
 	bool "python3"
-	depends on !BR2_PACKAGE_PYTHON
 	depends on BR2_USE_WCHAR
 	# uses fork()
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libffi
 	depends on !BR2_STATIC_LIBS
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1  # need time64 support in uclibc
 	select BR2_PACKAGE_LIBFFI
 	select BR2_PACKAGE_BLUEZ5_UTILS_HEADERS if BR2_PACKAGE_BLUEZ5_UTILS
+	select BR2_PACKAGE_HOST_PYTHON3
 	help
 	  The python language interpreter.
 
@@ -45,6 +46,13 @@ config BR2_PACKAGE_PYTHON3_2TO3
 	bool "2to3 module"
 	help
 	  code translation from python 2 to 3
+
+config BR2_PACKAGE_PYTHON3_BERKELEYDB
+	bool "berkeleydb"
+	select BR2_PACKAGE_BERKELEYDB
+	select BR2_PACKAGE_BERKELEYDB_DBM
+	help
+	  berkeleydb module for Python3
 
 config BR2_PACKAGE_PYTHON3_BZIP2
 	bool "bz2 module"
@@ -84,6 +92,8 @@ config BR2_PACKAGE_PYTHON3_READLINE
 config BR2_PACKAGE_PYTHON3_SSL
 	bool "ssl"
 	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_BLAKE2
 	help
 	  _ssl module for Python3 (required for https in urllib etc).
 

@@ -1,6 +1,7 @@
-# From https://lists.freedesktop.org/archives/mesa-announce/2020-December/000614.html
-sha256  cce001b685d23afb976b04138714906abcf7e7f996da6355e6a43e5ca486533d  mesa-20.3.2.tar.xz
-sha512  0cabf8ddfd20b56098c8f4c081a3c2d4741ef42f40c929645e74284db99cf2a81137d7d279b7b6a0c15dea83905119ddf612411b36344dc22a488de9f311f5ed  mesa-20.3.2.tar.xz
-
+# From https://lists.freedesktop.org/archives/mesa-announce/2025-May/000803.html
+sha256  0d179e019e3441f5d957330d7abb3b0ef38e6782cc85a382608cd1a4a77fa2e1  mesa-25.0.6.tar.xz
+sha512  6a0abc8a5bbbb8ffdad7286fc5642f643b1f4183794425ba689c2c9f5c73a4131c8685074241deb1022631b4c1f1c505dbd848190ec60d5d6931e90dd9316e05  mesa-25.0.6.tar.xz
 # License
-sha256  1361129baa4519b6ed27a1bf4aeee33a58b060bf7bb9b6ea415ecede04e35e46  docs/license.rst
+sha256  0d1a0472ecc81830e75c20d59b0ea02841e3db21255e0ebad97ab682c54d6615  docs/license.rst
+sha256  323c587d0ccf10e376f8bf9a7f31fb4ca6078105194b42e0b1e0ee2bc9bde71f  licenses/MIT
+sha256  686bf035a1fd22076416fd3b90370ac67771e884bf57f55693d51f8ce7c710a7  licenses/SGI-B-2.0

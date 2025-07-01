@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-LIBCAP_VERSION = 2.46
+LIBCAP_VERSION = 2.76
 LIBCAP_SITE = https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2
 LIBCAP_SOURCE = libcap-$(LIBCAP_VERSION).tar.xz
 LIBCAP_LICENSE = GPL-2.0 or BSD-3-Clause
 LIBCAP_LICENSE_FILES = License
+LIBCAP_CPE_ID_VALID = YES
 
-LIBCAP_DEPENDENCIES = host-libcap host-gperf
+LIBCAP_DEPENDENCIES = host-gperf
 LIBCAP_INSTALL_STAGING = YES
 
 HOST_LIBCAP_DEPENDENCIES = host-gperf
@@ -63,8 +64,11 @@ define HOST_LIBCAP_BUILD_CMDS
 		$(HOST_LIBCAP_MAKE_FLAGS)
 endef
 
+# Set DESTDIR to a non-empty path, so that libcap's Makefile
+# does not trigger calls to ldconfig
 define HOST_LIBCAP_INSTALL_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) $(HOST_LIBCAP_MAKE_FLAGS) install
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) $(HOST_LIBCAP_MAKE_FLAGS) \
+		DESTDIR=/ install
 endef
 
 $(eval $(generic-package))

@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-UBUS_VERSION = 34c6e818e431cc53478a0f7c7c1eca07d194d692
-UBUS_SITE = git://git.openwrt.org/project/ubus.git
+UBUS_VERSION = afa57cce0aff82f4a7a0e509d4387ebc23dd3be7
+UBUS_SITE = https://git.openwrt.org/project/ubus.git
+UBUS_SITE_METHOD = git
 
 UBUS_LICENSE = LGPL-2.1
 UBUS_LICENSE_FILES = ubusd_acl.h
@@ -22,13 +23,6 @@ UBUS_CONF_OPTS += -DBUILD_LUA=ON \
 	-DLUAPATH=/usr/lib/lua/$(LUAINTERPRETER_ABIVER)
 else
 UBUS_CONF_OPTS += -DBUILD_LUA=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_SYSTEMD),y)
-UBUS_DEPENDENCIES += systemd
-UBUS_CONF_OPTS += -DENABLE_SYSTEMD=ON
-else
-UBUS_CONF_OPTS += -DENABLE_SYSTEMD=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_UBUS_EXAMPLES),y)

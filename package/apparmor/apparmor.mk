@@ -5,12 +5,14 @@
 ################################################################################
 
 # When updating the version here, please also update the libapparmor package
-APPARMOR_VERSION_MAJOR = 3.0
-APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).0
-APPARMOR_SITE = https://launchpad.net/apparmor/$(APPARMOR_VERSION_MAJOR)/$(APPARMOR_VERSION_MAJOR)/+download
-APPARMOR_DL_SUBDIR = libapparmor
+APPARMOR_VERSION_MAJOR = 3.1
+APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).7
+APPARMOR_SOURCE = apparmor-v$(APPARMOR_VERSION).tar.gz
+APPARMOR_SITE = https://gitlab.com/apparmor/apparmor/-/archive/v$(APPARMOR_VERSION)
+APPARMOR_DL_SUBDIR = apparmor
 APPARMOR_LICENSE = GPL-2.0
 APPARMOR_LICENSE_FILES = LICENSE parser/COPYING.GPL
+APPARMOR_CPE_ID_VENDOR = canonical
 
 APPARMOR_DEPENDENCIES = libapparmor
 
@@ -53,15 +55,6 @@ ifeq ($(BR2_PACKAGE_APACHE),y)
 APPARMOR_DEPENDENCIES += apache
 APPARMOR_TOOLS += changehat/mod_apparmor
 APPARMOR_MAKE_OPTS += APXS=$(STAGING_DIR)/usr/bin/apxs
-
-ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
-define APPARMOR_FIXUP_APXS
-	$(SED) "s@$(PER_PACKAGE_DIR)/[^/]\+/@$(PER_PACKAGE_DIR)/apparmor/@g" \
-		$(STAGING_DIR)/usr/bin/apxs \
-		$(STAGING_DIR)/usr/build/config_vars.mk
-endef
-APPARMOR_POST_CONFIGURE_HOOKS += APPARMOR_FIXUP_APXS
-endif
 endif
 
 define APPARMOR_BUILD_CMDS

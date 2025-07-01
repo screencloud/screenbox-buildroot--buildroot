@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-VSFTPD_VERSION = 3.0.3
+VSFTPD_VERSION = 3.0.5
 VSFTPD_SITE = https://security.appspot.com/downloads
 VSFTPD_LIBS = -lcrypt
 VSFTPD_LICENSE = GPL-2.0
 VSFTPD_LICENSE_FILES = COPYING
+VSFTPD_CPE_ID_VALID = YES
+VSFTPD_SELINUX_MODULES = ftp
 
 define VSFTPD_DISABLE_UTMPX
 	$(SED) 's/.*VSF_BUILD_UTMPX/#undef VSF_BUILD_UTMPX/' $(@D)/builddefs.h
@@ -31,6 +33,10 @@ endif
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 VSFTPD_DEPENDENCIES += libcap
 VSFTPD_LIBS += -lcap
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+VSFTPD_DEPENDENCIES += libxcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)

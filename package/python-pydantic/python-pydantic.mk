@@ -4,11 +4,14 @@
 #
 ################################################################################
 
-PYTHON_PYDANTIC_VERSION = 1.3
+PYTHON_PYDANTIC_VERSION = 2.11.5
 PYTHON_PYDANTIC_SOURCE = pydantic-$(PYTHON_PYDANTIC_VERSION).tar.gz
-PYTHON_PYDANTIC_SITE = https://files.pythonhosted.org/packages/3e/69/b22c0eb3157115e1e3d111f574a6a41552539f1e53b064121ef4e9ac1368
-PYTHON_PYDANTIC_SETUP_TYPE = setuptools
+PYTHON_PYDANTIC_SITE = https://files.pythonhosted.org/packages/f0/86/8ce9040065e8f924d642c58e4a344e33163a07f6b57f836d0d734e0ad3fb
+PYTHON_PYDANTIC_SETUP_TYPE = hatch
 PYTHON_PYDANTIC_LICENSE = MIT
 PYTHON_PYDANTIC_LICENSE_FILES = LICENSE
+PYTHON_PYDANTIC_CPE_ID_VENDOR = pydantic_project
+PYTHON_PYDANTIC_CPE_ID_PRODUCT = pydantic
+PYTHON_PYDANTIC_DEPENDENCIES = host-python-hatch-fancy-pypi-readme
 
 $(eval $(python-package))

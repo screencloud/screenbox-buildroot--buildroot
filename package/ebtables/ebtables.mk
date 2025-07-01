@@ -5,7 +5,7 @@
 ################################################################################
 
 EBTABLES_VERSION = 2.0.11
-EBTABLES_SITE = http://ftp.netfilter.org/pub/ebtables
+EBTABLES_SITE = https://netfilter.org/pub/ebtables
 EBTABLES_LICENSE = GPL-2.0+
 EBTABLES_LICENSE_FILES = COPYING
 EBTABLES_CPE_ID_VENDOR = netfilter
@@ -31,6 +31,13 @@ define EBTABLES_REMOVE_UTILS_RESTORE
 	$(RM) -f $(TARGET_DIR)/usr/sbin/ebtables-legacy-restore
 endef
 EBTABLES_POST_INSTALL_TARGET_HOOKS += EBTABLES_REMOVE_UTILS_RESTORE
+endif
+
+ifeq ($(BR2_PACKAGE_IPTABLES_NFTABLES),)
+define EBTABLES_INSTALL_LEGACY_SYMLINK
+	ln -sf /usr/sbin/ebtables-legacy $(TARGET_DIR)/sbin/ebtables
+endef
+EBTABLES_POST_INSTALL_TARGET_HOOKS += EBTABLES_INSTALL_LEGACY_SYMLINK
 endif
 
 $(eval $(autotools-package))

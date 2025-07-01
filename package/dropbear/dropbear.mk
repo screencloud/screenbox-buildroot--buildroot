@@ -4,15 +4,15 @@
 #
 ################################################################################
 
-DROPBEAR_VERSION = 2020.81
+DROPBEAR_VERSION = 2025.88
 DROPBEAR_SITE = https://matt.ucc.asn.au/dropbear/releases
 DROPBEAR_SOURCE = dropbear-$(DROPBEAR_VERSION).tar.bz2
 DROPBEAR_LICENSE = MIT, BSD-2-Clause, Public domain
 DROPBEAR_LICENSE_FILES = LICENSE
 DROPBEAR_TARGET_BINS = dropbearkey dropbearconvert scp
 DROPBEAR_PROGRAMS = dropbear $(DROPBEAR_TARGET_BINS)
-DROPBEAR_CPE_ID_VENDOR = $(DROPBEAR_NAME)_ssh_project
-DROPBEAR_CPE_ID_NAME = $(DROPBEAR_NAME)_ssh
+DROPBEAR_CPE_ID_VENDOR = dropbear_ssh_project
+DROPBEAR_CPE_ID_PRODUCT = dropbear_ssh
 
 # Disable hardening flags added by dropbear configure.ac, and let
 # Buildroot add them when the relevant options are enabled. This
@@ -34,6 +34,10 @@ DROPBEAR_MAKE = \
 # binary. Adding a --disable-static reverts this
 ifeq ($(BR2_SHARED_STATIC_LIBS),y)
 DROPBEAR_CONF_OPTS += --disable-static
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+DROPBEAR_DEPENDENCIES += libxcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
@@ -63,14 +67,13 @@ define DROPBEAR_ENABLE_LEGACY_CRYPTO
 	echo '#define DROPBEAR_3DES 1'                  >> $(@D)/localoptions.h
 	echo '#define DROPBEAR_ENABLE_CBC_MODE 1'       >> $(@D)/localoptions.h
 	echo '#define DROPBEAR_SHA1_96_HMAC 1'          >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_DH_GROUP1 1'             >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_DSS 1'                   >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_SHA1_HMAC 1'             >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_RSA_SHA1 1'              >> $(@D)/localoptions.h
+	echo '#define DROPBEAR_DH_GROUP14_SHA1 1'       >> $(@D)/localoptions.h
 endef
 DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_ENABLE_LEGACY_CRYPTO
-else
-define DROPBEAR_DISABLE_LEGACY_CRYPTO
-	echo '#define DROPBEAR_DSS 0'                   >> $(@D)/localoptions.h
-	echo '#define DROPBEAR_DH_GROUP1 0'             >> $(@D)/localoptions.h
-endef
-DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_DISABLE_LEGACY_CRYPTO
 endif
 
 ifeq ($(BR2_PACKAGE_DROPBEAR_DISABLE_REVERSEDNS),)
@@ -87,8 +90,6 @@ DROPBEAR_CONF_OPTS += --disable-zlib --enable-bundled-libtom
 else
 define DROPBEAR_BUILD_FEATURED
 	echo '#define DROPBEAR_SMALL_CODE 0'            >> $(@D)/localoptions.h
-	echo '#define DROPBEAR_TWOFISH128 1'            >> $(@D)/localoptions.h
-	echo '#define DROPBEAR_TWOFISH256 1'            >> $(@D)/localoptions.h
 endef
 DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_BUILD_FEATURED
 DROPBEAR_DEPENDENCIES += zlib libtomcrypt

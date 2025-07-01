@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-PYTHON_PATHVALIDATE_VERSION = 0.29.0
+PYTHON_PATHVALIDATE_VERSION = 3.2.3
 PYTHON_PATHVALIDATE_SOURCE = pathvalidate-$(PYTHON_PATHVALIDATE_VERSION).tar.gz
-PYTHON_PATHVALIDATE_SITE = https://files.pythonhosted.org/packages/fc/3f/7a96e26d36b7e99abc9c236ff6db2de2d98e59fed45f9932eb0d17d48473
+PYTHON_PATHVALIDATE_SITE = https://files.pythonhosted.org/packages/92/87/c7a2f51cc62df0495acb0ed2533a7c74cc895e569a1b020ee5f6e9fa4e21
 PYTHON_PATHVALIDATE_SETUP_TYPE = setuptools
 PYTHON_PATHVALIDATE_LICENSE = MIT
 PYTHON_PATHVALIDATE_LICENSE_FILES = LICENSE
+PYTHON_PATHVALIDATE_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))

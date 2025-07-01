@@ -4,17 +4,22 @@
 #
 ################################################################################
 
-NET_TOOLS_VERSION = 479bb4a7e11a4084e2935c0a576388f92469225b
-NET_TOOLS_SITE = git://git.code.sf.net/p/net-tools/code
+NET_TOOLS_VERSION = 2.10
+NET_TOOLS_SOURCE = net-tools-$(NET_TOOLS_VERSION).tar.xz
+NET_TOOLS_SITE = http://downloads.sourceforge.net/project/net-tools
 NET_TOOLS_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 NET_TOOLS_LICENSE = GPL-2.0+
 NET_TOOLS_LICENSE_FILES = COPYING
+NET_TOOLS_CPE_ID_VALID = YES
+
+# 0001-CVE-2025-46836-interface.c-Stack-based-Buffer-Overfl.patch
+NET_TOOLS_IGNORE_CVES += CVE-2025-46836
 
 define NET_TOOLS_CONFIGURE_CMDS
 	(cd $(@D); yes "" | ./configure.sh config.in )
 endef
 
-# Enable I18N when appropiate
+# Enable I18N when appropriate
 ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
 define NET_TOOLS_ENABLE_I18N
 	$(SED) 's:I18N 0:I18N 1:' $(@D)/config.h
@@ -34,11 +39,10 @@ define NET_TOOLS_BUILD_CMDS
 		$(MAKE) -C $(@D)
 endef
 
-# install renames conflicting binaries, update does not
 # ifconfig & route reside in /sbin for busybox, so ensure we don't end
 # up with two versions of those.
 define NET_TOOLS_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) update
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
 	mv -f $(TARGET_DIR)/bin/ifconfig $(TARGET_DIR)/sbin/ifconfig
 	mv -f $(TARGET_DIR)/bin/route $(TARGET_DIR)/sbin/route
 endef

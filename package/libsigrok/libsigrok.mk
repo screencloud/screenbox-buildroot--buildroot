@@ -11,6 +11,8 @@ LIBSIGROK_LICENSE_FILES = COPYING
 LIBSIGROK_INSTALL_STAGING = YES
 LIBSIGROK_DEPENDENCIES = libglib2 libzip host-pkgconf
 LIBSIGROK_CONF_OPTS = --disable-java --disable-python
+# We're patching configure.ac
+LIBSIGROK_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS),y)
 LIBSIGROK_CONF_OPTS += --with-libbluez
@@ -52,14 +54,31 @@ LIBSIGROK_DEPENDENCIES += glibmm
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSIGROKCXX),y)
+LIBSIGROK_CONF_ENV = CXXFLAGS="$(TARGET_CXXFLAGS) -std=c++17"
 LIBSIGROK_CONF_OPTS += --enable-cxx
 # host-doxygen is used by C++ bindings to parse libsigrok symbols
 LIBSIGROK_DEPENDENCIES += \
 	glibmm \
 	host-doxygen \
-	$(if $(BR2_PACKAGE_PYTHON3),host-python3,host-python)
+	host-python3
 else
 LIBSIGROK_CONF_OPTS += --disable-cxx
+endif
+
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+LIBSIGROK_UDEV_RULES = \
+	60-libsigrok.rules \
+	$(if $(BR2_PACKAGE_SYSTEMD_LOGIND), \
+		61-libsigrok-uaccess.rules, \
+		61-libsigrok-plugdev.rules \
+	)
+define LIBSIGROK_INSTALL_UDEV_RULES
+	$(foreach rule, $(LIBSIGROK_UDEV_RULES), \
+		$(INSTALL) -D -m 0644 $(@D)/contrib/$(rule) \
+			$(TARGET_DIR)/usr/lib/udev/rules.d/$(rule)$(sep) \
+	)
+endef
+LIBSIGROK_POST_INSTALL_TARGET_HOOKS += LIBSIGROK_INSTALL_UDEV_RULES
 endif
 
 $(eval $(autotools-package))

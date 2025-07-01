@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-LIBCEC_VERSION = 4.0.7
+LIBCEC_VERSION = 7.0.0
 LIBCEC_SITE = $(call github,Pulse-Eight,libcec,libcec-$(LIBCEC_VERSION))
 LIBCEC_LICENSE = GPL-2.0+
-LIBCEC_LICENSE_FILES = COPYING
+LIBCEC_LICENSE_FILES = LICENSE.md
 
 LIBCEC_INSTALL_STAGING = YES
 LIBCEC_DEPENDENCIES = host-pkgconf libplatform
@@ -20,8 +20,8 @@ ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 LIBCEC_DEPENDENCIES += udev
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON)$(BR2_PACKAGE_PYTHON3),y)
-LIBCEC_DEPENDENCIES += host-swig $(if $(BR2_PACKAGE_PYTHON3),python3,python)
+ifeq ($(BR2_PACKAGE_PYTHON3),y)
+LIBCEC_DEPENDENCIES += host-swig python3
 endif
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
@@ -39,7 +39,6 @@ endif
 
 # Disable information about how libCEC is compiled.
 LIBCEC_CONF_OPTS += -DHAVE_GIT_BIN="" \
-	-DHAVE_DATE_BIN="" \
 	-DHAVE_WHOAMI_BIN="" \
 	-DHAVE_HOSTNAME_BIN="" \
 	-DHAVE_UNAME_BIN=""
